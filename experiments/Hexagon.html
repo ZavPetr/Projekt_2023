@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <canvas id="myCanvas" width="1000" height="600" style="border:1px solid #000000;"></canvas>
+
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+var sizeMapNumber = 7;
+var sizeMap = [];
+var width = canvas.width;
+var height = canvas.height;
+
+var camX = width/2;
+var camY = height/2;
+var camZoom = 1
+
+var hexX = width/3;
+var hexY = height/2;
+var hexSize = 50;
+
+function velikostMapy(size, pole)
+{
+    let prumer = size + (size - 1);
+    let pocetTrue = size;
+    let pocetFalse = 1;
+
+    for(let i = 0; i < prumer; i++)
+    {
+        for(let j = 0; j < prumer; j++)
+        {
+            if(i < prumer/2)
+            {
+                if(((prumer - 1 ) - j) >= pocetTrue)
+                {
+                    pole[i][j] = "false";
+                }
+                else
+                {
+                    pole[i][j] = "true";
+                }
+            }
+            else
+            {
+                if(((size - 1 ) - j) >= pocetFalse)
+                {
+                    pole[i][j] = "true";
+                }
+                else
+                {
+                    pole[i][j] = "false";
+                }
+            }
+        }
+
+        pocetTrue++;
+        
+        if(i > prumer/2)
+        {
+            pocetFalse++;
+        }
+    }
+}
+
+function drawBackground()
+{
+    ctx.beginPath();
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, width, height);
+    ctx.closePath();
+}
+
+function drawHexagon(x, y, size)
+{
+    x = transformX(x);
+    y = transformY(y);
+    size = transformSize(size);
+
+    ctx.beginPath();
+    ctx.moveTo(x + size * Math.cos(0), y + size * Math.sin(0));
+
+    
+    for (let i = 1; i <= 6; i++) {
+        const angle = (i * 2 * Math.PI) / 6;
+        ctx.lineTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
+    }
+
+    ctx.closePath();
+    ctx.stroke();
+}
+
+function transformX(x)
+{
+    return screenX = (x - camX ) * camZoom + canvas.width/2
+}
+
+function transformY(y)
+{
+    return screenY = -(y - camY) * camZoom + canvas.height/2
+}
+
+function transformSize(size)
+{
+    return screenSize = size * camZoom;
+}
+
+function draw()
+{
+    drawBackground();
+    drawHexagon(hexX, hexY, hexSize);
+    drawHexagon(width/1.5, height/2, hexSize);
+}
+
+draw();
+
+document.addEventListener('keydown', (event)=> {                  
+    if(event.key == "a")
+    {
+        camX = camX + 10;
+        draw();
+    }
+    else
+    if(event.key == "d")
+    {
+        camX = camX - 10;
+        draw();                
+    }
+    else
+    if(event.key == "w")
+    {
+        camY = camY - 10;
+        draw();
+    }
+    else
+    if(event.key == "s")
+    {
+        camY = camY + 10;
+        draw();                
+    }
+    else
+    if(event.key == "z")
+    {
+        camZoom = camZoom * 1.3;
+        draw();               
+    }
+    else
+    if(event.key == "t")
+    {
+        camZoom = camZoom / 1.3;
+        draw();               
+    }
+
+});
+</script>
+
+
+</body>
+</html>
